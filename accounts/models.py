@@ -101,4 +101,4 @@ class User(AbstractBaseUser):
     def is_staff(self):
         """Is the user a member of staff?"""
         # Simplest possible answer: All admins are staff
-        return self.role in {self.Role.ADMIN, self.Role.EMPLOYEE}
+        return self.role in {self.Role.ADMIN}

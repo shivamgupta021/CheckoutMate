@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
-from .renderers import UserRenderer
+from .renderers import ErrorRenderer
 from accounts.serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
@@ -24,7 +24,7 @@ def get_tokens_for_user(user):
 
 # TODO: Remove token generation from UserRegistrationView maybe
 class UserRegistrationView(APIView):
-    renderer_classes = [UserRenderer]
+    renderer_classes = [ErrorRenderer]
 
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -39,7 +39,7 @@ class UserRegistrationView(APIView):
 
 
 class UserLoginView(APIView):
-    renderer_classes = [UserRenderer]
+    renderer_classes = [ErrorRenderer]
 
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
@@ -63,7 +63,7 @@ class UserLoginView(APIView):
 
 
 class UserProfileView(APIView):
-    renderer_classes = [UserRenderer]
+    renderer_classes = [ErrorRenderer]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -72,7 +72,7 @@ class UserProfileView(APIView):
 
 
 class UserChangePasswordView(APIView):
-    renderer_classes = [UserRenderer]
+    renderer_classes = [ErrorRenderer]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

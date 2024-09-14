@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +41,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
+    "celery",
+    "django_celery_beat",
     # Local,
     "accounts",
     "products",
@@ -148,3 +151,31 @@ REST_FRAMEWORK = {
 
 # Set custom auth model
 AUTH_USER_MODEL = "accounts.User"
+
+# Celery Settings
+CELERY_TIMEZONE = "UTC"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+
+# Celery Beat Schedule
+CELERY_BEAT_SCHEDULE = {
+    "check-low-quantity-products": {
+        "task": "products.tasks.check_low_quantity_products",
+        "schedule": crontab(minute="*/15"),  # Run every 15 minutes
+    },
+    "send-daily-product-update": {
+        "task": "products.tasks.send_daily_product_update",
+        "schedule": crontab(hour=7, minute=0),  # Run daily at 7 AM
+    },
+}
+
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "your_email@example.com"
+EMAIL_HOST_PASSWORD = "your_email_password"
+DEFAULT_FROM_EMAIL = "your_email@example.com"

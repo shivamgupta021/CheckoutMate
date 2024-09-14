@@ -7,7 +7,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ["name", "price", "quantity", "created_at", "updated_at"]
     list_filter = ["created_at", "updated_at"]
     search_fields = ["name", "description"]
-    readonly_fields = ("created_at", "updated_at")  # Changed to tuple
+    readonly_fields = ("created_at", "updated_at")
     fieldsets = (
         ("Product details", {"fields": ("name", "description", "price", "quantity")}),
         (

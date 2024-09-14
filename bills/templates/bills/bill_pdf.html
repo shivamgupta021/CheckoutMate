@@ -1,0 +1,68 @@
+{% load math_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .total {
+            font-weight: bold;
+        }
+    </style>
+    <title>Bill PDF</title>
+</head>
+<body>
+<div class="header">
+    <h2>Bill for {{ user.username }}</h2>
+    <p>Bill Date: {{ bill.created_at }}</p>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in cart_items %}
+    <tr>
+        <td>{{ item.product.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.quantity|multiply:item.product.price }}</td>
+    </tr>
+    {% endfor %}
+    <tr class="total">
+        <td colspan="3">Total Amount</td>
+        <td>{{ bill.total_amount }}</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

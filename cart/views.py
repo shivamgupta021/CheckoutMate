@@ -14,6 +14,9 @@ class CartViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     @action(detail=True, methods=["post"])
     def add_item(self, request, pk=None):
         cart = self.get_object()
@@ -29,7 +32,11 @@ class CartViewSet(viewsets.ModelViewSet):
 
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
-        cart_item.quantity += quantity
+        if created:
+            cart_item.quantity = quantity
+        else:
+            cart_item.quantity += quantity
+
         cart_item.save()
 
         serializer = CartItemSerializer(cart_item)

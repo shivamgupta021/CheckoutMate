@@ -9,13 +9,14 @@ from django.db import transaction
 from .models import Bill, BillItem
 from .serializers import BillSerializer
 from cart.models import Cart
-from products.models import Product
 from django.conf import settings
+from accounts.renderers import ErrorRenderer
 
 
 class BillViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
     permission_classes = [permissions.IsAuthenticated]
+    renderer_classes = [ErrorRenderer]
 
     def get_queryset(self):
         return Bill.objects.filter(user=self.request.user)

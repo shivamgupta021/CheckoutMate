@@ -5,11 +5,13 @@ from .models import Cart, CartItem
 from .serializers import CartSerializer, CartItemSerializer
 from products.models import Product
 from .permissions import IsCustomer
+from accounts.renderers import ErrorRenderer
 
 
 class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [IsCustomer]
+    renderer_classes = [ErrorRenderer]
 
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user)

@@ -19,6 +19,12 @@ xhtml2pdf = "^0.2.16"
 drf-spectacular = "^0.27.2"
 faker = "^28.4.1"
 faker-commerce = "^1.0.4"
+psycopg2-binary = "^2.9.9"
+python-dotenv = "^1.0.1"
+python-decouple = "^3.8"
+dj-database-url = "^2.2.0"
+environs = "^11.0.0"
+whitenoise = "^6.7.0"
 
 
 [build-system]

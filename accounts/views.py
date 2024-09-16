@@ -6,11 +6,17 @@ from .renderers import ErrorRenderer
 from accounts.serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
-    UserProfileSerializer,
     UserChangePasswordSerializer,
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema, OpenApiExample
+from faker import Faker
+import random
+
+fake = Faker()
+employee_email = fake.email()
+customer_email = fake.email()
 
 
 def get_tokens_for_user(user):
@@ -22,10 +28,40 @@ def get_tokens_for_user(user):
     }
 
 
-# TODO: Remove token generation from UserRegistrationView maybe
 class UserRegistrationView(APIView):
     renderer_classes = [ErrorRenderer]
+    serializer_class = UserRegistrationSerializer
 
+    @extend_schema(
+        request=UserRegistrationSerializer,
+        responses=UserRegistrationSerializer,
+        examples=[
+            OpenApiExample(
+                "Employee Example",
+                value={
+                    "role": "EMPLOYEE",
+                    "name": fake.name(),
+                    "age": random.randint(18, 60),
+                    "email": employee_email,
+                    "password": "supersecretpassword",
+                    "password2": "supersecretpassword",
+                },
+                description="Example of an employee.",
+            ),
+            OpenApiExample(
+                "Customer Example",
+                value={
+                    "role": "CUSTOMER",
+                    "name": fake.name(),
+                    "age": random.randint(18, 60),
+                    "email": customer_email,
+                    "password": "supersecretpassword",
+                    "password2": "supersecretpassword",
+                },
+                description="Example of a customer.",
+            ),
+        ],
+    )
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -40,7 +76,32 @@ class UserRegistrationView(APIView):
 
 class UserLoginView(APIView):
     renderer_classes = [ErrorRenderer]
+    serializer_class = UserLoginSerializer
 
+    @extend_schema(
+        request=UserLoginSerializer,
+        responses=UserLoginSerializer,
+        examples=[
+            OpenApiExample(
+                "Employee Example",
+                value={
+                    "email": employee_email,
+                    "password": "supersecretpassword",
+                    "password2": "supersecretpassword",
+                },
+                description="Example of an employee.",
+            ),
+            OpenApiExample(
+                "Customer Example",
+                value={
+                    "email": customer_email,
+                    "password": "supersecretpassword",
+                    "password2": "supersecretpassword",
+                },
+                description="Example of a customer.",
+            ),
+        ],
+    )
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -62,19 +123,25 @@ class UserLoginView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserProfileView(APIView):
-    renderer_classes = [ErrorRenderer]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        serializer = UserProfileSerializer(request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class UserChangePasswordView(APIView):
     renderer_classes = [ErrorRenderer]
     permission_classes = [IsAuthenticated]
+    serializer_class = UserChangePasswordSerializer
 
+    @extend_schema(
+        request=UserRegistrationSerializer,
+        responses=UserRegistrationSerializer,
+        examples=[
+            OpenApiExample(
+                "Change Password Example",
+                value={
+                    "password": "notsosecretpassword",
+                    "password2": "notsosecretpassword",
+                },
+                description="Example of a changed password. Requires authentication.",
+            ),
+        ],
+    )
     def post(self, request):
         serializer = UserChangePasswordSerializer(
             data=request.data, context={"user": request.user}

@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-2pzzl7ivz8mxtd$=w^049hwn+a_nd(i6=b3uf0oyg1lo&837+!"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # Application definition
 
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "celery",
     "django_celery_beat",
+    "drf_spectacular",
     # Local,
     "accounts",
     "products",
@@ -147,7 +148,10 @@ CORS_ALLOWED_ORIGINS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    # "PAGE_SIZE": 10,
 }
 
 # Set custom auth model
@@ -180,3 +184,17 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "your_email@example.com"
 EMAIL_HOST_PASSWORD = "your_email_password"
 DEFAULT_FROM_EMAIL = "your_email@example.com"
+
+# drf-spectacular Settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "CheckoutMate API",
+    "DESCRIPTION": "This is an API which authenticates employees and customers. Employees can manage the inventory and get regular inventory updates through email. Customers can add use the cart functionality to add, remove or update products they want to purchase. A bill is dynamically generated and sent to the customer email.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "EXAMPLES_SCHEMES": {
+        "string": {"type": "string", "default": "custom example"},
+        "integer": {"type": "integer", "default": 42},
+        "boolean": {"type": "boolean", "default": True},
+    },
+    "SCHEMA_PATH_PREFIX": "/api/",
+}

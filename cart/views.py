@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Cart, CartItem
@@ -6,6 +6,7 @@ from .serializers import CartSerializer, CartItemSerializer
 from products.models import Product
 from .permissions import IsCustomer
 from accounts.renderers import ErrorRenderer
+from drf_spectacular.utils import extend_schema
 
 
 class CartViewSet(viewsets.ModelViewSet):
@@ -14,7 +15,21 @@ class CartViewSet(viewsets.ModelViewSet):
     renderer_classes = [ErrorRenderer]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Cart.objects.none()
         return Cart.objects.filter(user=self.request.user)
+
+    @extend_schema(exclude=True)
+    def retrieve(self, request, pk=None):
+        pass
+
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        pass
+
+    @extend_schema(exclude=True)
+    def partial_update(self, serializer):
+        pass
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -44,7 +59,7 @@ class CartViewSet(viewsets.ModelViewSet):
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["patch"])
     def update_item_quantity(self, request, pk=None):
         cart = self.get_object()
         product_id = request.data.get("product_id")
@@ -66,7 +81,7 @@ class CartViewSet(viewsets.ModelViewSet):
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["delete"])
     def remove_item(self, request, pk=None):
         cart = self.get_object()
         product_id = request.data.get("product_id")
@@ -80,9 +95,3 @@ class CartViewSet(viewsets.ModelViewSet):
 
         cart_item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def update(self, request, *args, **kwargs):
-        return Response(
-            {"detail": "This action is not allowed."},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
-        )

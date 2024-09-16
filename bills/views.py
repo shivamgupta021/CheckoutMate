@@ -11,6 +11,7 @@ from .serializers import BillSerializer
 from cart.models import Cart
 from django.conf import settings
 from accounts.renderers import ErrorRenderer
+from drf_spectacular.utils import extend_schema
 
 
 class BillViewSet(viewsets.ModelViewSet):
@@ -18,9 +19,37 @@ class BillViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     renderer_classes = [ErrorRenderer]
 
+    @extend_schema(exclude=True)
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return Bill.objects.none()
         return Bill.objects.filter(user=self.request.user)
 
+    @extend_schema(exclude=True)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    @extend_schema(exclude=True)
     def generate_pdf(self, template_src, context_dict):
         """
         Generates a PDF from the given template and context.
@@ -71,14 +100,14 @@ class BillViewSet(viewsets.ModelViewSet):
         bill.total_amount = total_amount
         bill.save()
 
-        cart.items.all().delete()  # Clear the cart
+        cart.items.all().delete()
 
         context = {
             "bill": bill,
             "user": user,
             "cart_items": cart_items,
         }
-        pdf = self.generate_pdf("bills/bill_pdf.html", context)  # Your bill template
+        pdf = self.generate_pdf("bills/bill_pdf.html", context)
 
         if pdf:
             # Send the PDF via email

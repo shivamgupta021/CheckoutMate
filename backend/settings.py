@@ -32,12 +32,12 @@ SECRET_KEY = env.str("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = [
-    ".vercel.app",
+    "checkoutmate-production.up.railway.app",
     "localhost",
     "127.0.0.1",
 ]
 CSRF_TRUSTED_ORIGINS = [
-    "https://*.vercel.app",
+    "https://checkoutmate-production.up.railway.app",
 ]
 
 # Application definition

@@ -197,13 +197,14 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "your_email@example.com"
-EMAIL_HOST_PASSWORD = "your_email_password"
-DEFAULT_FROM_EMAIL = "your_email@example.com"
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = "shivam.gupta02210@gmail.com"
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = "shivam.gupta02210@gmail.com"
 
 # drf-spectacular Settings
 SPECTACULAR_SETTINGS = {

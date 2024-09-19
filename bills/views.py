@@ -12,14 +12,14 @@ from cart.models import Cart
 from django.conf import settings
 from accounts.renderers import ErrorRenderer
 from drf_spectacular.utils import extend_schema
+from cart.permissions import IsCustomer
 
 
 class BillViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsCustomer]
     renderer_classes = [ErrorRenderer]
 
-    @extend_schema(exclude=True)
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Bill.objects.none()
@@ -27,27 +27,27 @@ class BillViewSet(viewsets.ModelViewSet):
 
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+        pass
 
     @extend_schema(exclude=True)
     def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
+        pass
 
     @extend_schema(exclude=True)
     def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
+        pass
 
     @extend_schema(exclude=True)
     def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        pass
 
     @extend_schema(exclude=True)
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        pass
 
     @extend_schema(exclude=True)
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        pass
 
     @extend_schema(exclude=True)
     def generate_pdf(self, template_src, context_dict):

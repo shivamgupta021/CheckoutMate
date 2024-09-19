@@ -27,6 +27,9 @@ class BillAdmin(admin.ModelAdmin):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_staff
+
 
 @admin.register(BillItem)
 class BillItemAdmin(admin.ModelAdmin):
@@ -42,4 +45,4 @@ class BillItemAdmin(admin.ModelAdmin):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        return request.user.is_staff

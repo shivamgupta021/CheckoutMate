@@ -80,10 +80,6 @@ token in the `Authorization` header for each request.
     - **Customers**: Have access to endpoints related to browsing products, managing their cart, and generating bills.
     - **Employees**: Have access to manage the inventory, including creating, updating, and deleting products.
 
-To obtain a JWT token, users (customers or employees) must authenticate by sending their credentials to
-the `/auth/login/` endpoint. Upon successful authentication, a JWT token will be returned, which must be included in
-the `Authorization header of future requests.
-
 ### Obtaining Credentials
 
 - Login Request:

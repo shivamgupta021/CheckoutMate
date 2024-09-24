@@ -2,21 +2,17 @@
 
 ## Table of Contents
 
-1. **[Introduction](#introduction)**
-
-2. **[Setup and Installation](#setup-and-installation)**
-
-3. **[Authentication](#authentication)**
-    - 3.1 [Obtaining Credentials](#obtaining-credentials)
-    - 3.2 [Example Authenticated Request](#example-authenticated-request)
-
-4. **[Endpoints](#endpoints)**
-    - 4.1 [Users](#users)
-    - 4.2 [Posts](#posts)
-
-5. **[Testing](#testing)**
-    - **5.1** [Running Tests](#running-tests)
-    - **5.2** [Test Coverage](#test-coverage)
+- [Introduction](#introduction)
+- [Setup and Installation](#setup-and-installation)
+- [Authentication](#authentication)
+    - [Obtaining Credentials](#obtaining-credentials)
+    - [Example Authenticated Request](#example-authenticated-request)
+- [Endpoints](#endpoints)
+    - [Accounts](#accounts)
+    - [Products](#products)
+- [Testing](#testing)
+    - [Running Tests](#running-tests)
+    - [Test Coverage](#test-coverage)
 
 ## Introduction
 

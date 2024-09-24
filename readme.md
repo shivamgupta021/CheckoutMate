@@ -177,3 +177,54 @@ curl -X POST 127.0.0.1:8000/api/products/ \
     ```
 
 ### Products
+
+- List all Products
+  ```bash
+  curl -X GET 127.0.0.1:8000/api/products/ \
+  -H "Content-Type: application/json"
+  ```
+- Retrieve a single Product
+   ```bash
+  curl -X GET 127.0.0.1:8000/api/products/{id}/ \
+  -H "Content-Type: application/json"
+  ```
+- Create a new Product : Requires Employee Authentication
+  ```bash
+  curl -X POST 127.0.0.1:8000/api/products/ \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Pants",
+    "description": "Significant natural actually brother bring. Admit four what dream anything usually research science.",
+    "price": 87.91,
+    "quantity": 587
+  }'
+  ```
+- Update an existing Product: Requires Employee Authentication
+    - PUT:
+      ```bash
+      curl -X PUT 127.0.0.1:8000/api/products/{id}/ \
+      -H "Authorization: Bearer <access_token>" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "New Product",
+        "description": "Significant natural actually brother bring. Admit four what dream anything usually research science.",
+        "price": 87.91,
+        "quantity": 587
+      }'
+      ```
+    - PATCH:
+      ```bash
+      curl -X PATCH 127.0.0.1:8000/api/products/{id}/ \
+      -H "Authorization: Bearer <access_token>" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "quantity": 587
+      }'
+      ```
+- Delete a Product: Requires Employee Authentication
+  ```bash
+  curl -X DELETE 127.0.0.1:8000/api/products/{id}/ \
+  -H "Authorization: Bearer <access_token>" \
+  -H "Content-Type: application/json" 
+  ```

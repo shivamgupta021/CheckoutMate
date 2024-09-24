@@ -12,18 +12,7 @@
 
 4. **[Endpoints](#endpoints)**
     - 4.1 [Users](#users)
-        - 4.1.1 [List Users](#list-users)
-        - 4.1.2 [Get User](#get-user)
-        - 4.1.3 [Create User](#create-user)
-        - 4.1.4 [Update User](#update-user)
-        - 4.1.5 [Delete User](#delete-user)
     - 4.2 [Posts](#posts)
-        - **4.2.1 [List Posts](#list-posts)
-        - 4.2.2 [Get Post](#get-post)
-        - 4.2.3 [Create Post](#create-post)
-        - 4.2.4 [Update Post](#update-post)
-        - 4.2.5 [Delete Post](#delete-post)
-
 
 5. **[Testing](#testing)**
     - **5.1** [Running Tests](#running-tests)

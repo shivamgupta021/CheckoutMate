@@ -13,6 +13,7 @@ class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [IsCustomer]
     renderer_classes = [ErrorRenderer]
+    pagination_class = None
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
@@ -24,6 +25,10 @@ class CartViewSet(viewsets.ModelViewSet):
         pass
 
     @extend_schema(exclude=True)
+    def create(self, request):
+        pass
+
+    @extend_schema(exclude=True)
     def update(self, request, *args, **kwargs):
         pass
 
@@ -31,12 +36,30 @@ class CartViewSet(viewsets.ModelViewSet):
     def partial_update(self, serializer):
         pass
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    @extend_schema(exclude=True)
+    def destroy(self, request, *args, **kwargs):
+        pass
 
-    @action(detail=True, methods=["post"])
+    def get_user_cart(self):
+        return Cart.objects.get(user=self.request.user)
+
+    @extend_schema(
+        description="Add an item to the authenticated user's cart",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "product_id": {"type": "integer"},
+                    "quantity": {"type": "integer", "default": 1},
+                },
+                "required": ["product_id"]
+            }
+        },
+        responses={200: CartItemSerializer},
+    )
+    @action(detail=False, methods=["post"])
     def add_item(self, request, pk=None):
-        cart = self.get_object()
+        cart = self.get_user_cart()
         product_id = request.data.get("product_id")
         quantity = int(request.data.get("quantity", 1))
 
@@ -59,9 +82,23 @@ class CartViewSet(viewsets.ModelViewSet):
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["patch"])
+    @extend_schema(
+        description="Update the quantity of an item in the authenticated user's cart",
+        request={
+            "application/json": {
+                "type": "object",
+                "properties": {
+                    "product_id": {"type": "integer"},
+                    "quantity": {"type": "integer", "default": 1},
+                },
+                "required": ["product_id", "quantity"]
+            }
+        },
+        responses={200: CartItemSerializer}
+    )
+    @action(detail=False, methods=["patch"])
     def update_item_quantity(self, request, pk=None):
-        cart = self.get_object()
+        cart = self.get_user_cart()
         product_id = request.data.get("product_id")
         new_quantity = int(request.data.get("quantity", 1))
 
@@ -81,10 +118,19 @@ class CartViewSet(viewsets.ModelViewSet):
         serializer = CartItemSerializer(cart_item)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["delete"])
+    @extend_schema(
+        description="Remove an item from the authenticated user's cart",
+        responses={204: None}
+    )
+    @action(detail=False, methods=["delete"], url_path="remove_item/(?P<product_id>\d+)")
     def remove_item(self, request, pk=None):
-        cart = self.get_object()
+        cart = self.get_user_cart()
         product_id = request.data.get("product_id")
+
+        if not product_id:
+            return Response(
+                {"error": "Product ID is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             cart_item = CartItem.objects.get(cart=cart, product_id=product_id)

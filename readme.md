@@ -89,14 +89,13 @@ the `Authorization header of future requests.
 - Login Request:
 
     ```bash
-    POST /api/user/login/
-    Content-Type: application/json
-    
-    {
+    curl -X POST 127.0.0.1:8000/api/user/login/ \
+    -H "Content-Type: application/json" \
+    -d '{
       "email": "customer@checkoutmate.com",
       "password": "supersecretpassword",
       "password2": "supersecretpassword"
-    }
+    }'
     ```
 - Successful Response:
 
@@ -112,16 +111,69 @@ the `Authorization header of future requests.
 
 ### Example Authenticated Request
 
-  ```bash
-  curl -X POST api/products/ \
-  -H "Authorization: Bearer <access_token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Pants",
-    "description": "Either hard professor financial store dark security agency. Audience important determine a.",
-    "price": 88.55,
-    "quantity": 992
-  }'
-  ```
+```bash
+# Requires Employee Authentication
+curl -X POST 127.0.0.1:8000/api/products/ \
+-H "Authorization: Bearer <access_token>" \
+-H "Content-Type: application/json" \
+-d '{
+"name": "Pants",
+"description": "Either hard professor financial store dark security agency. Audience important determine a.",
+"price": 88.55,
+"quantity": 992
+}'
+```
 
 ## Endpoints
+
+### Accounts
+
+- Register an Employee or Customer
+    ```bash
+    curl -X POST 127.0.0.1:8000/api/user/register/ \
+    -H "Content-Type: application/json" \
+    -d '{
+      "role": "EMPLOYEE",
+      "name": "Maurice Randolph",
+      "age": 38,
+      "email": "employee@checkoutmate.com",
+      "password": "supersecretpassword",
+      "password2": "supersecretpassword"
+      }'
+      # OR
+    -d '{  "role": "CUSTOMER",
+      "name": "Donald Anderson",
+      "age": 42,
+      "email": "customer@checkoutmate.com",
+      "password": "supersecretpassword",
+      "password2": "supersecretpassword"
+    }'
+    ```
+- Login an Employee or Customer
+    ```bash
+    curl -X POST 127.0.0.1:8000/api/user/register/ \
+    -H "Content-Type: application/json" \
+    -d '{
+      "email": "employee.email@checkoutmate.com",
+      "password": "supersecretpassword",
+      "password2": "supersecretpassword"
+    }'
+    # OR
+    -d '{
+      "email": "customer.email@checkoutmate.com",
+      "password": "supersecretpassword",
+      "password2": "supersecretpassword"
+    }'
+    ```
+- Change Password : Requires authentication
+    ```bash
+    curl -X POST 127.0.0.1:8000/api/user/change-password/ \
+    -H "Authorization: Bearer <access_token>" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "password": "notsosecretpassword",
+      "password2": "notsosecretpassword"
+    }'
+    ```
+
+### Products

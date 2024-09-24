@@ -1,5 +1,5 @@
 import random
-
+from django.core.exceptions import ValidationError
 from rest_framework import viewsets
 from .models import Product
 from .serializers import ProductSerializer
@@ -7,6 +7,8 @@ from .permissions import IsEmployeeOrReadOnly
 from accounts.renderers import ErrorRenderer
 from drf_spectacular.utils import extend_schema, OpenApiExample
 from faker import Faker
+from rest_framework.response import Response
+from rest_framework import status
 import faker_commerce
 
 fake = Faker()
@@ -34,3 +36,14 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsEmployeeOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        product_name = request.data.get('name')
+        if Product.objects.filter(name=product_name).exists():
+            raise ValidationError({"detail": "A product with this name already exists."})
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

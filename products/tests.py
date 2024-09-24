@@ -36,7 +36,7 @@ class ProductAPITestCase(APITestCase):
         request = self.factory.get(reverse("product-list"))
         response = self.view(request)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data['count'], 1)
 
     def test_get_single_product(self):
         view = ProductViewSet.as_view({"get": "retrieve"})

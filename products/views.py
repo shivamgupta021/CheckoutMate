@@ -5,12 +5,12 @@ from .models import Product
 from .serializers import ProductSerializer
 from .permissions import IsEmployeeOrReadOnly
 from accounts.renderers import ErrorRenderer
-from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from faker import Faker
 from rest_framework.response import Response
 from rest_framework import status
 import faker_commerce
-from rest_framework import pagination
+from .pagination import ProductPagination
 
 fake = Faker()
 fake.add_provider(faker_commerce.Provider)
@@ -37,7 +37,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsEmployeeOrReadOnly]
-    pagination_class = pagination.PageNumberPagination
+
+    pagination_class = ProductPagination
 
     def create(self, request, *args, **kwargs):
         product_name = request.data.get('name')

@@ -35,3 +35,5 @@ urlpatterns = [
         name="swagger-ui",
     ),
 ]
+
+urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]

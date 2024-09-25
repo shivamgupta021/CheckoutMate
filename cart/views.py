@@ -13,7 +13,6 @@ class CartViewSet(viewsets.ModelViewSet):
     serializer_class = CartSerializer
     permission_classes = [IsCustomer]
     renderer_classes = [ErrorRenderer]
-    pagination_class = None
 
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):

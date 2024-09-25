@@ -28,6 +28,7 @@ whitenoise = "^6.7.0"
 gunicorn = "^23.0.0"
 django-extensions = "^3.2.3"
 django-shell-plus = "^1.1.7"
+django-silk = "^5.2.0"
 
 
 [build-system]

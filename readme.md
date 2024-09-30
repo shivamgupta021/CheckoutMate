@@ -10,9 +10,7 @@
 - [Endpoints](#endpoints)
     - [Accounts](#accounts)
     - [Products](#products)
-- [Testing](#testing)
-    - [Running Tests](#running-tests)
-    - [Test Coverage](#test-coverage)
+- [Query Optimisations](#query-optimisations)
 
 ## Introduction
 
@@ -225,7 +223,7 @@ curl -X POST 127.0.0.1:8000/api/products/ \
   -H "Content-Type: application/json" 
   ```
 
-## Query Optimisations -
+## Query Optimisations
 
 **OVERALL TIME IS HIGH DUE TO SERVERS** \
 [Commit](https://github.com/shivamgupta021/CheckoutMate/commit/2093ab482bad09a0e6156cc2a2eacc1e082d482e)

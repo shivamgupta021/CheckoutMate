@@ -228,7 +228,7 @@ curl -X POST 127.0.0.1:8000/api/products/ \
 ## Query Optimisations -
 
 **OVERALL TIME IS HIGH DUE TO SERVERS** \
-[Commit](https://github.com/user-attachments/assets/c77b893c-6adb-4c15-bc29-ab86d4d59b23)
+[Commit](https://github.com/shivamgupta021/CheckoutMate/commit/2093ab482bad09a0e6156cc2a2eacc1e082d482e)
 
 #### Before :
 
@@ -238,4 +238,4 @@ curl -X POST 127.0.0.1:8000/api/products/ \
 
 - Optimised the number of queries using select_related, prefetch_related, bulk_update and bulk_add functions, improving
   the response time and removing redundancy.
-  ![img_1.png](https://github.com/user-attachments/assets/8a2e1b85-5e7a-45df-a92f-2c60c3a66beb)
+  ![img_1.png](https://github.com/user-attachments/assets/c77b893c-6adb-4c15-bc29-ab86d4d59b23)

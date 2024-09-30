@@ -227,11 +227,12 @@ curl -X POST 127.0.0.1:8000/api/products/ \
 
 ## Query Optimisations -
 
-[Commit](https://github.com/shivamgupta021/CheckoutMate/commit/2093ab482bad09a0e6156cc2a2eacc1e082d482e)
+**OVERALL TIME IS HIGH DUE TO SERVERS** \
+[Commit](https://github.com/user-attachments/assets/c77b893c-6adb-4c15-bc29-ab86d4d59b23)
 
 #### Before :
 
-![img.png](https://github.com/user-attachments/assets/8289d6ea-e51a-4492-9a53-315bf42919aa)
+![img.png](https://github.com/user-attachments/assets/52f1627c-bb7a-4fb6-89e4-ba2a6eae6a38)
 
 #### After :
 

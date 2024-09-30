@@ -7,6 +7,7 @@ from products.models import Product
 from .permissions import IsCustomer
 from accounts.renderers import ErrorRenderer
 from drf_spectacular.utils import extend_schema
+from django.db.models import Prefetch
 
 
 class CartViewSet(viewsets.ModelViewSet):
@@ -17,7 +18,8 @@ class CartViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Cart.objects.none()
-        return Cart.objects.filter(user=self.request.user)
+        items_qs = CartItem.objects.select_related('product')
+        return Cart.objects.prefetch_related(Prefetch("items", queryset=items_qs)).filter(user=self.request.user)
 
     @extend_schema(exclude=True)
     def retrieve(self, request, pk=None):

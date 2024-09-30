@@ -1,18 +1,19 @@
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.template.loader import get_template
 from io import BytesIO
-from django.core.mail import EmailMessage
+from .tasks import send_bill_email
 from xhtml2pdf import pisa
 from django.db import transaction
+from products.models import Product
 from .models import Bill, BillItem
 from .serializers import BillSerializer
-from cart.models import Cart
-from django.conf import settings
+from cart.models import Cart, CartItem
 from accounts.renderers import ErrorRenderer
 from drf_spectacular.utils import extend_schema
 from cart.permissions import IsCustomer
+from django.db.models import F, Prefetch
 
 
 class BillViewSet(viewsets.ModelViewSet):
@@ -23,7 +24,9 @@ class BillViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Bill.objects.none()
-        return Bill.objects.filter(user=self.request.user)
+        return Bill.objects.prefetch_related(
+            Prefetch("bills", queryset=BillItem.objects.select_related('product'))
+        ).filter(user=self.request.user)
 
     @extend_schema(exclude=True)
     def list(self, request, *args, **kwargs):
@@ -66,19 +69,27 @@ class BillViewSet(viewsets.ModelViewSet):
     @transaction.atomic
     def generate_bill(self, request):
         user = request.user
-        cart = Cart.objects.get(user=user)
-        cart_items = cart.items.all()
+        cart = Cart.objects.filter(user=user).prefetch_related(
+            Prefetch("items", queryset=CartItem.objects.select_related('product'))
+        ).first()
 
-        if not cart_items:
+        if not cart or not cart.items.exists():
             return Response(
                 {"error": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        total_amount = 0
+        cart_items = list(cart.items.all())
+        product_ids = [item.product_id for item in cart_items]
+        products = {p.id: p for p in Product.objects.filter(id__in=product_ids)}
+
+        total_amount = sum(item.product.price * item.quantity for item in cart_items)
         bill = Bill.objects.create(user=user, total_amount=total_amount)
 
+        bill_items = []
+        products_to_update = []
+
         for cart_item in cart_items:
-            product = cart_item.product
+            product = products[cart_item.product_id]
             if product.quantity < cart_item.quantity:
                 transaction.set_rollback(True)
                 return Response(
@@ -86,19 +97,20 @@ class BillViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            BillItem.objects.create(
-                bill=bill,
-                product=product,
-                quantity=cart_item.quantity,
-                price=product.price,
+            bill_items.append(
+                BillItem(
+                    bill=bill,
+                    product=product,
+                    quantity=cart_item.quantity,
+                    price=product.price,
+                )
             )
 
-            total_amount += product.price * cart_item.quantity
-            product.quantity -= cart_item.quantity
-            product.save()
+            product.quantity = F('quantity') - cart_item.quantity
+            products_to_update.append(product)
 
-        bill.total_amount = total_amount
-        bill.save()
+        BillItem.objects.bulk_create(bill_items)
+        Product.objects.bulk_update(products_to_update, ['quantity'])
 
         cart.items.all().delete()
 
@@ -110,16 +122,7 @@ class BillViewSet(viewsets.ModelViewSet):
         pdf = self.generate_pdf("bills/bill_pdf.html", context)
 
         if pdf:
-            # Send the PDF via email
-            email = EmailMessage(
-                subject=f"Bill for Order {bill.id}",
-                body="Please find attached the bill for your recent order.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[user.email],
-            )
-
-            email.attach(f"bill_{bill.id}.pdf", pdf, "application/pdf")
-            email.send()
+            send_bill_email.delay(bill.id, user.email, pdf)
 
         serializer = self.get_serializer(bill)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

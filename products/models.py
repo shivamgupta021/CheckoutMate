@@ -18,5 +18,5 @@ class Product(models.Model):
         return self.name
 
     class Meta:
-        ordering = ["price"]
-        indexes = [models.Index(fields=["price"])]
+        ordering = ["price", 'quantity']
+        indexes = [models.Index(fields=["price", 'quantity'])]

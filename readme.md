@@ -232,10 +232,10 @@ curl -X POST 127.0.0.1:8000/api/products/ \
 
 #### Before :
 
-![img.png](https://github.com/user-attachments/assets/52f1627c-bb7a-4fb6-89e4-ba2a6eae6a38)
+![img.png](https://github.com/user-attachments/assets/c77b893c-6adb-4c15-bc29-ab86d4d59b23)
 
 #### After :
 
 - Optimised the number of queries using select_related, prefetch_related, bulk_update and bulk_add functions, improving
   the response time and removing redundancy.
-  ![img_1.png](https://github.com/user-attachments/assets/c77b893c-6adb-4c15-bc29-ab86d4d59b23)
+  ![img_1.png](https://github.com/user-attachments/assets/52f1627c-bb7a-4fb6-89e4-ba2a6eae6a38)
